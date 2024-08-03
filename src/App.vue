@@ -1,5 +1,11 @@
 <script>
+import axios from "axios";
+import AppHeader from "./components/AppHeader.vue";
+
 export default {
+  components: {
+    AppHeader,
+  },
   data() {
     return {
 
@@ -9,7 +15,8 @@ export default {
 </script>
 
 <template>
-  <h1>One Piece</h1>
+  <AppHeader />
+  <!-- <h1>One Piece</h1> -->
 
   <router-view></router-view>
 
