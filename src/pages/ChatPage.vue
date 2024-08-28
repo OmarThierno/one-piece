@@ -160,6 +160,8 @@ export default {
         this.isCompleted = false;
         this.isLoading = false;
 
+        // Scroll to the bottom of the chat
+        this.scrollToBottom();
 
       } catch (error) {
         console.error('Errore in getMessages()', error);
@@ -200,7 +202,17 @@ export default {
       }
 
       this.mesPrint.push(newMesSend);
+      this.scrollToBottom();
 
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const chatContainer = this.$el.querySelector('.main-body');
+        chatContainer.scroll({
+          top: chatContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      });
     }
 
   }
@@ -209,36 +221,38 @@ export default {
 
 <template>
   <main class="main">
-    <header class="container">
-      <div class="d-flex align-items-center gap-3">
+    <div class="container">
+      <header class="d-flex align-items-center gap-3">
         <h3 class="my-4">ChopperChat</h3>
         <div v-if="isLoading">is writing...</div>
-      </div>
-      <main class="main-body">
-        <div v-for="message in mesPrint" class="row row-cols-1- row-cols-ms-2 row-cols-md-2 message"
-          :class="message.figure === 'user' ? 'justify-content-end' : ''">
-          <div class="col">
-            <p :class="message.figure === 'Chopper' ? 'received' : 'send'">{{ message.messages }}</p>
+      </header>
+      <main class="position-relative">
+        <div class="main-body">
+          <div v-for="message in mesPrint" class="row row-cols-1- row-cols-ms-2 row-cols-md-2 message"
+            :class="message.figure === 'user' ? 'justify-content-end' : ''">
+            <div class="col">
+              <p :class="message.figure === 'Chopper' ? 'received' : 'send'">{{ message.messages }}</p>
+            </div>
           </div>
-        </div>
-        <div v-if="isLoading" id="fake-writing" class="">
-          <div class="ball ball-1">
-          </div>
-          <div class="ball ball-2">
-          </div>
-          <div class="ball ball-3">
-          </div>
-          <div class="ball ball-4">
+          <div v-if="isLoading" id="fake-writing" class="">
+            <div class="ball ball-1">
+            </div>
+            <div class="ball ball-2">
+            </div>
+            <div class="ball ball-3">
+            </div>
+            <div class="ball ball-4">
+            </div>
           </div>
         </div>
         <div class="ms_input-mes d-flex align-items-center gap-2">
-          <input @keyup.enter="startThread" class="flex-grow-1" type="text" placeholder="Chatta" v-model="mesUser">
+          <input @keyup.enter="startThread" class="flex-grow-1" type="text" placeholder="Chatta..." v-model="mesUser">
           <i v-if="mesUser === ''" class="fa-regular fa-paper-plane"></i>
           <i v-else @click="startThread" class="fa-solid fa-paper-plane"></i>
         </div>
       </main>
       <!-- <button @click="startThread">Make Sequential Requests</button> -->
-    </header>
+    </div>
   </main>
 
 </template>
@@ -250,6 +264,7 @@ main.main {
     height: 76vh;
     background-color: rgb(250, 250, 250);
     padding: 20px;
+    padding-bottom: 60px;
     border-radius: 15px;
     box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.15);
     overflow-y: scroll;
@@ -274,10 +289,10 @@ main.main {
   }
 
   .ms_input-mes {
-    position: sticky;
-    bottom: 0;
-    right: 0;
-    left: 0;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    left: 20px;
     background-color: rgb(212, 212, 212);
     padding: 10px 20px;
     border-radius: 10px;
@@ -305,6 +320,7 @@ main.main {
       border-radius: 5px;
       background: rgb(119, 203, 1);
       border-radius: 10px;
+      margin-bottom: 20px;
     }
   
     .ball {
